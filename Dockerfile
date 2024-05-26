@@ -1,12 +1,16 @@
-FROM python:3.6.5-slim
+FROM python:3.12.3-slim
 
 RUN apt-get update
 
-WORKDIR /code
+WORKDIR /src
 
-COPY requirements.txt /code/requirements.txt
-RUN pip install -r requirements.txt
+COPY src/requirements.txt src/requirements.txt
+RUN pip install -r src/requirements.txt
 
-COPY . /code
+COPY src /src
+
+ENV PORT 8080
+
+EXPOSE $PORT
 
 CMD ["bash"]

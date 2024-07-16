@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 from crew import PropertyHunterCrew
+import time
 
 
 def init_chat_history():
@@ -15,7 +16,6 @@ def clear_chat_history():
 
 
 def display_chat_messages():
-    # Set assistant icon to Snowflake logo
     icons = {"assistant": "./house.png", "human": None}
 
     # Display the messages
@@ -24,8 +24,13 @@ def display_chat_messages():
             st.write(message["content"])
 
 
+def display_chat_message(role, content):
+    icons = {"assistant": "./house.png", "human": None}
+    with st.chat_message(role, avatar=icons[role]):
+        st.write_stream(content)
+
+
 def display_sidebar_ui():
-    # with st.sidebar:
     st.sidebar.title('Property Hunter')
     st.sidebar.subheader("Model inputs")
 
@@ -36,8 +41,7 @@ def display_sidebar_ui():
     if st.sidebar.button("Kickoff Crew"):
         kickoff_crew()
         
-    # st.sidebar.button("Reset", on_click=clear_chat_history(), type="primary")
-    # st.sidebar.caption("Built by Grant Armstrong and Ethan O'Mahony")
+    st.sidebar.button("Reset", on_click=clear_chat_history(), type="primary")
 
     st.sidebar.subheader("About")
     st.sidebar.caption("Built by Grant Armstrong and Ethan O'Mahony")
@@ -46,13 +50,26 @@ def display_sidebar_ui():
     # st.subheader("Debug")
     # st.write(st.session_state)
 
+def stream_data(input):
+    for word in input.split(" "):
+        yield word + " "
+        time.sleep(0.02)
+
 
 def kickoff_crew():
+
     inputs={
         "location": st.session_state.location, 
         "no_rooms": st.session_state.no_rooms,
         "budget": (st.session_state.budget[0], st.session_state.budget[1])
     }
+
+    human_message = f"""
+    I'm looking for a property in {inputs["location"]} with {inputs["no_rooms"]} rooms.
+    My budget is between {inputs["budget"][0]} and {inputs["budget"][1]} per month.
+    """
+
+    human_message_stream = stream_data(human_message)
 
     # PropertyHunterCrew().crew().kickoff(inputs=inputs)
 
@@ -61,14 +78,10 @@ def kickoff_crew():
     # display_chat_message("user", inputs)
     # st.session_state
 
-    st.chat_message("user").write(inputs)
-    st.session_state.messages.append({"role": "user", "content": inputs})
+    display_chat_message("human", human_message_stream)
+    st.session_state.messages.append({"role": "human", "content": human_message})
 
-
-def display_chat_message(role, content):
-    icons = {"assistant": "./house.png", "user": "⛷️"}
-    with st.chat_message(role, avatar=icons[role]):
-        st.write_stream(content)
+    get_and_process_prompt()
 
 
 def get_and_process_prompt():
@@ -82,13 +95,22 @@ def get_and_process_prompt():
     if st.session_state.chat_aborted:
         # st.button('Reset chat', on_click=clear_chat_history, key="clear_chat_history")
         st.chat_input(disabled=True)
-    # elif prompt := st.chat_input():
-    #     st.session_state.messages.append({"role": "user", "content": prompt})
-    #     st.rerun()
+    elif prompt := st.chat_input():
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.rerun()
 
 
 def generate_response():
     """String generator for the Snowflake Arctic response."""
+
+    _LOREM_IPSUM = """
+    Lorem ipsum dolor sit amet, **consectetur adipiscing** elit, sed do eiusmod tempor
+    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    """
+    for word in _LOREM_IPSUM.split(" "):
+        yield word + " "
+        time.sleep(0.02)
     # for dict_message in st.session_state.messages:
     #     if dict_message["role"] == "user":
     #         topic = dict_message["content"]

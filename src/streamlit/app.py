@@ -5,17 +5,33 @@ import time
 
 
 def init_chat_history():
-    """Create a st.session_state.messages list to store chat messages"""
+    """
+    Create a st.session_state.messages list to store chat messages if none exist.
+    """
+
     if "messages" not in st.session_state:
         clear_chat_history()
 
 
 def clear_chat_history():
-    st.session_state.messages = [{"role": "assistant", "content": "Hey. I'm Proppy, an agent designed to find rental properties in your area that fit all your needs. Try asking me about properties in your area."}]
-    st.session_state.chat_aborted = False
+    """
+    Reset session_state.messages to greeting message.
+    """
+    st.session_state.messages = [
+        {
+            "role": "assistant",
+            "content": "Hey. I'm Proppy, an agent designed to find rental properties in your area that fit all your needs. Try asking me about properties in your area.",
+        }
+    ]
+    # st.session_state.chat_aborted = False
 
 
 def display_chat_messages():
+    """
+    Display all messages in st.session_state.messages,
+    for example after a reset.
+    """
+
     icons = {"assistant": "./house.png", "human": None}
 
     # Display the messages
@@ -31,57 +47,33 @@ def display_chat_message(role, content):
 
 
 def display_sidebar_ui():
-    st.sidebar.title('Property Hunter')
+    st.sidebar.title("Property Hunter")
     st.sidebar.subheader("Model inputs")
 
     st.sidebar.text_input("Location", key="location", placeholder="Washington D.C.")
-    st.sidebar.number_input("No. of rooms", min_value=1, key="no_rooms", placeholder="1")
-    st.sidebar.slider("Budget", min_value=0, max_value=10000, value=(0, 10000), step=100, key="budget", )
+    st.sidebar.number_input(
+        "No. of rooms", min_value=1, key="no_rooms", placeholder="1"
+    )
+    st.sidebar.slider(
+        "Budget",
+        min_value=0,
+        max_value=10000,
+        value=(0, 10000),
+        step=100,
+        key="budget",
+    )
 
     if st.sidebar.button("Kickoff Crew"):
         kickoff_crew()
-        
+
     st.sidebar.button("Reset", on_click=clear_chat_history(), type="primary")
 
     st.sidebar.subheader("About")
     st.sidebar.caption("Built by Grant Armstrong and Ethan O'Mahony")
 
-        # # # Uncomment to show debug info
+    # # # Uncomment to show debug info
     # st.subheader("Debug")
     # st.write(st.session_state)
-
-def stream_data(input):
-    for word in input.split(" "):
-        yield word + " "
-        time.sleep(0.02)
-
-
-def kickoff_crew():
-
-    inputs={
-        "location": st.session_state.location, 
-        "no_rooms": st.session_state.no_rooms,
-        "budget": (st.session_state.budget[0], st.session_state.budget[1])
-    }
-
-    human_message = f"""
-    I'm looking for a property in {inputs["location"]} with {inputs["no_rooms"]} rooms.
-    My budget is between {inputs["budget"][0]} and {inputs["budget"][1]} per month.
-    """
-
-    human_message_stream = stream_data(human_message)
-
-    # PropertyHunterCrew().crew().kickoff(inputs=inputs)
-
-    # st.session_state.messages.append({"role": "user", "content": str(inputs)})
-    # st.write(inputs)
-    # display_chat_message("user", inputs)
-    # st.session_state
-
-    display_chat_message("human", human_message_stream)
-    st.session_state.messages.append({"role": "human", "content": human_message})
-
-    get_and_process_prompt()
 
 
 def get_and_process_prompt():
@@ -100,6 +92,35 @@ def get_and_process_prompt():
         st.rerun()
 
 
+def stream_data(input):
+    for word in input.split(" "):
+        yield word + " "
+        time.sleep(0.02)
+
+
+def kickoff_crew():
+
+    inputs = {
+        "location": st.session_state.location,
+        "no_rooms": st.session_state.no_rooms,
+        "budget": (st.session_state.budget[0], st.session_state.budget[1]),
+    }
+
+    human_message = f"""
+    I'm looking for a property in {inputs["location"]} with {inputs["no_rooms"]} rooms.
+    My budget is between {inputs["budget"][0]} and {inputs["budget"][1]} per month.
+    """
+
+    human_message_stream = stream_data(human_message)
+
+    # PropertyHunterCrew().crew().kickoff(inputs=inputs)
+
+    display_chat_message("human", human_message_stream)
+    st.session_state.messages.append({"role": "human", "content": human_message})
+
+    get_and_process_prompt()
+
+
 def generate_response():
     """String generator for the Snowflake Arctic response."""
 
@@ -111,19 +132,6 @@ def generate_response():
     for word in _LOREM_IPSUM.split(" "):
         yield word + " "
         time.sleep(0.02)
-    # for dict_message in st.session_state.messages:
-    #     if dict_message["role"] == "user":
-    #         topic = dict_message["content"]
-    
-    # chat_completion = generate_article(topic)
-
-    # st.session_state.messages.append({"role": "assistant", "content": ""})
-    # st.session_state.messages[-1]["content"] += str(chat_completion)
-
-    # yield str(chat_completion)
-    # Final safety check...
-    # if not check_safety():
-    #     abort_chat("I cannot answer this question.")
 
 
 def main():

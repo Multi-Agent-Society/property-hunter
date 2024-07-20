@@ -2,40 +2,10 @@ from crewai import Agent, Task, Crew, Process
 from crewai.project import CrewBase, agent, crew, task
 from langchain_groq import ChatGroq
 from crewai_tools import ScrapeWebsiteTool, SerperDevTool
-from pydantic import BaseModel
-from utils import get_serper_api_key 
-
+from utils import PropertyDetails, SearchResults, get_serper_api_key
 
 import streamlit as st
 import os
-
-class PropertyDetails(BaseModel):
-    location: str
-    no_beds: int
-    no_baths: int
-    budget_high: int
-    budget_low: int
-    pets: str
-    public_transit: bool
-    move_in_date: str
-    car_parking: bool
-    other_ameneties: str
-    # Will be filled with information relevant to making a decision but not explicitly mentioned by user
-    extra_considerations: str    
-
-class SearchResults(BaseModel):
-    location: str
-    no_beds: int
-    no_baths: int
-    budget_high: int
-    budget_low: int
-    pets: str
-    public_transit: bool
-    move_in_date: str
-    car_parking: bool
-    other_ameneties: str
-    # Will be filled with information relevant to making a decision but not explicitly mentioned by user
-    extra_considerations: str    
 
 @CrewBase
 class PropertyHunterCrew():
@@ -110,10 +80,9 @@ class PropertyHunterCrew():
     def presentation_task(self) -> Task:
         return Task(
             config=self.tasks_config["presentation_task"],
-            output_file="short_list.md",  # Outputs the final results as a text file
+            output_file="short_list.md",  # Outputs the final results as a text file, could possible email this
             agent=self.closing_consultant()
         )
-
 
     @crew
     def crew(self) -> Crew:

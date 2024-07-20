@@ -7,3 +7,4 @@ utils
 jupyter
 streamlit
 transformers
+langchain_groq

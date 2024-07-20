@@ -18,7 +18,7 @@ class PropertyHunterCrew():
         return llm
 
     @agent
-    def planner(self) -> Agent:
+    def proppy(self) -> Agent:
         return Agent(
             config=self.agents_config["planner"],
             allow_delegation=False,
@@ -27,7 +27,7 @@ class PropertyHunterCrew():
         )
 
     @agent
-    def writer(self) -> Agent:
+    def scrappy(self) -> Agent:
         return Agent(
             config=self.agents_config["writer"],
             allow_delegation=False,
@@ -36,7 +36,7 @@ class PropertyHunterCrew():
         )
 
     @agent
-    def editor(self) -> Agent:
+    def closing_consultant(self) -> Agent:
         return Agent(
             config=self.agents_config["editor"],
             allow_delegation=False,

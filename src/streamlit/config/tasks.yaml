@@ -1,27 +1,45 @@
-gather_additional_information:
+gather_detailed_preferences:
   description: >
-    1. 
-    1. Prioritize the latest trends, key players, and noteworthy news on {topic}.
-    2. Identify the target audience, considering their interests and pain points.
-    3. Develop a detailed content outline including an introduction, key points, and a call to action.
-    4. Include SEO keywords and relevant data or sources.
-
+    From conversation with the tenant, gather all relevant preferencs, opinions and requirements pertaining
+    to the tenant's dream rental property.
   expected_output: >
-    A comprehensive content plan document with an outline, audience analysis, SEO keywords, and resources.
+    All the details of the dream rental property neatly formatted and concisely summarized and formatted as JSON. 
 
-write_task:
+search_task:
   description: >
-    1. Use the content plan to craft a compelling blog post on {topic}.
-    2. Incorporate SEO keywords naturally.
-    3. Sections/Subtitles are properly named in an engaging manner.
-    4. Ensure the post is structured with an engaging introduction, insightful body, and a summarizing conclusion.
-    5. Proofread for grammatical errors and alignment with the brand's voice.
-
+    Find all {rental_types} properties in {location} that fall with the rent range of {budget_high} to {budget_low}, 
+    have {no_beds} rooms/beds, {no_baths} bathrooms, and an available move-in date of {move_in_date}. Your goal is to maximize the number
+    of met criteria provided by the tenant. If {public_transit} == True, the tenant needs to know what forms of public transit are 
+    availble from or nearby their rental property if this information is provided. If {car_parking} == True, the user needs somewhere 
+    to park thier car nearby their rental property, and the availability of this option should be considered in the properties you fine. 
+    The tenant also indicated the following about pet accomodations: {pets}. Take into account these pet accomodations, if specified. 
+    If possible, also look for the provision of the following amenties in the properties you find: {other_ameneties}. If these ameneties 
+    are not present, it is ok. However, the provision of these ameneties by a given property is a bonus. Finally, the tenant specified 
+    the following extra considerations: {extra_considerations}. The rental properties you find ideally will meet most, if not all, 
+    of these extra considerations. 
   expected_output: >
-    A well-written blog post in markdown format, ready for publication, each section should have 2 or 3 paragraphs.
+    All the details of specifically chosen rental properties that accomodate most, if not all, of the tenant's requirements formatted as JSON. 
 
-edit_task:
+presentation_task:
   description: >
-    Proofread the given blog post for grammatical errors and alignment with the brand's voice.
+    Condcut a final conversation with the prospective tenant to help them make an informed decision in their rental property search. 
+    Present and discuss details about the final rental property options.
+    For each property, details should be presented in the following format:
+          Property Title
+          Property address
+          Contact Information
+
+          - Monthly Rent 
+          - Number of Bedrooms
+          - Number of Bathrooms
+          - Available move-in date
+
+          - Pet Considerations
+          - Accessibility of Public Transit 
+          - Availability of Car Parking
+
+          - Provided Ameneties
+          - Additiional Considerations
   expected_output: >
-    A well-written blog post in markdown format, ready for publication, each section should have 2 or 3 paragraphs.
+    A well structured presentation of the final rental property options in markdown format with all relevant details for each option presented clearly
+    in an organized manner. Following this presentation, you will conduct a dialogue with the tenant about these options. 

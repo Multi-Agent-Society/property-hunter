@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from crew import PropertyHunterCrew
+from crew import PropertyHunterCrew, PropertyDetails
 import time
 
 

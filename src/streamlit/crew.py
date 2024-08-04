@@ -2,7 +2,7 @@ from crewai import Agent, Task, Crew, Process
 from crewai.project import CrewBase, agent, crew, task
 from langchain_groq import ChatGroq
 from crewai_tools import ScrapeWebsiteTool, SerperDevTool
-from utils import PropertyDetails, SearchResults, get_serper_api_key
+from utils import PropertyDetails, SearchResults, get_serper_api_key, get_groq_api_key
 
 import streamlit as st
 import os
@@ -16,7 +16,8 @@ class PropertyHunterCrew():
         # Initialize the tools
         self.search_tool = SerperDevTool()
         self.scrape_tool = ScrapeWebsiteTool()
-        os.environ["SERPER_API_KEY"] = get_serper_api_key() # Need to define this function 
+        os.environ["SERPER_API_KEY"] = get_serper_api_key()
+        os.environ["GROQ_API_TOKEN"] = get_groq_api_key()
 
     def llm(self):
         llm = ChatGroq(

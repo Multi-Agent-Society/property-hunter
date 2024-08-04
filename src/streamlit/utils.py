@@ -42,6 +42,11 @@ def get_serper_api_key():
     openai_api_key = os.getenv("SERPER_API_KEY")
     return openai_api_key
 
+def get_groq_api_key():
+    load_env()
+    openai_api_key = os.getenv("GROQ_API_TOKEN")
+    return openai_api_key
+
 # break line every 80 characters if line is longer than 80 characters
 # don't break in the middle of a word
 def pretty_print_result(result):

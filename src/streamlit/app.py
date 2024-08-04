@@ -23,7 +23,7 @@ def clear_chat_history():
             "content": "Hey. I'm Proppy, an agent designed to find rental properties in your area that fit all your needs. Try asking me about properties in your area.",
         }
     ]
-    # st.session_state.chat_aborted = False
+    st.session_state.chat_aborted = False
 
 
 def display_chat_messages():
@@ -102,22 +102,24 @@ def kickoff_crew():
     inputs = {
         "location": st.session_state.location,
         "no_rooms": st.session_state.no_rooms,
-        "budget": (st.session_state.budget[0], st.session_state.budget[1]),
+        "budget_min": st.session_state.budget[0], 
+        "budget_max": st.session_state.budget[1],
     }
 
     human_message = f"""
     I'm looking for a property in {inputs["location"]} with {inputs["no_rooms"]} rooms.
-    My budget is between {inputs["budget"][0]} and {inputs["budget"][1]} per month.
+    My budget is between {inputs["budget_min"]} and {inputs["budget_max"]} per month.
     """
 
     human_message_stream = stream_data(human_message)
 
-    # PropertyHunterCrew().crew().kickoff(inputs=inputs)
-
     display_chat_message("human", human_message_stream)
     st.session_state.messages.append({"role": "human", "content": human_message})
 
-    get_and_process_prompt()
+    result = PropertyHunterCrew().crew().kickoff(inputs=inputs)
+
+    display_chat_message("assistant", result)
+    # get_and_process_prompt()
 
 
 def generate_response():

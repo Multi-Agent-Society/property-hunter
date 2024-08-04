@@ -99,7 +99,6 @@ def stream_data(input):
 
 
 def kickoff_crew():
-
     inputs = {
         "location": st.session_state.location,
         "no_rooms": st.session_state.no_rooms,

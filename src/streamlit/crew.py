@@ -21,76 +21,70 @@ class PropertyHunterCrew():
     def llm(self):
         llm = ChatGroq(
             api_key=os.environ["GROQ_API_TOKEN"],
-            model="llama3-70b-8192"
+            model="llama3-70b-8192",
         )
 
         return llm
 
     @agent
-    def proppy(self) -> Agent:
+    def research_agent(self) -> Agent:
         return Agent(
-            config=self.agents_config["proppy"],
+            config=self.agents_config["research_agent"],
             allow_delegation=False,
+            tools=[self.search_tool],
             verbose=True,
-            llm=self.llm()
+            llm=self.llm(),
         )
 
     @agent
-    def scrappy(self) -> Agent:
+    def real_estate_agent(self) -> Agent:
         return Agent(
-            config=self.agents_config["scrappy"],
+            config=self.agents_config["real_estate_agent"],
             allow_delegation=False,
-            tools=[self.search_tool, self.scrape_tool],
+            tools=[self.scrape_tool],
             verbose=True,
-            llm=self.llm()
+            llm=self.llm(),
         )
 
     @agent
-    def closing_consultant(self) -> Agent:
+    def data_wrangler(self) -> Agent:
         return Agent(
-            config=self.agents_config["closing_consultant"],
+            config=self.agents_config["data_wrangler"],
             allow_delegation=False,
             verbose=True,
-            llm=self.llm()
+            llm=self.llm(),
         )
 
     @task
-    def gather_detailed_preferences(self) -> Task:
+    def research_task(self) -> Task:
         return Task(
-            config=self.tasks_config["gather_detailed_preferences"],
-            # By setting human_input=True, the task will ask for human feedback (whether you like the results or not) before finalising it.
-            # i.e., "Let me make sure I understand all of your preferences correctly before continuing..."
-            human_input=True,
-            output_json=PropertyDetails(),
-            output_file="property_details.json",  
-            agent=self.proppy()
+            config=self.tasks_config["research_task"],
+            agent=self.research_agent()
         )
-    
+
     @task
     def search_task(self) -> Task:
         return Task(
             config=self.tasks_config["search_task"],
             # Need some kind of way to store search results, perhaps as JSON with a for loop over each relevant search result
-            output_json=SearchResults(),
-            output_file="search_results.json",  
-            agent=self.scrappy()
+            # output_json=SearchResults(),
+            # output_file="search_results.json",  
+            agent=self.real_estate_agent()
         )
     
     @task
-    def presentation_task(self) -> Task:
+    def aggregate_task(self) -> Task:
         return Task(
-            config=self.tasks_config["presentation_task"],
-            output_file="short_list.md",  # Outputs the final results as a text file, could possible email this
-            agent=self.closing_consultant()
+            config=self.tasks_config["aggregate_task"],
+            # output_file="short_list.md",  # Outputs the final results as a text file, could possible email this
+            agent=self.data_wrangler()
         )
 
     @crew
     def crew(self) -> Crew:
         return Crew(
             agents=self.agents,
-            # agents=[self.planner(), self.writer(), self.editor()],
-            # tasks=[self.plan_task(), self.write_task(), self.edit_task()],
             tasks=self.tasks,
             process=Process.sequential,
-            verbose=2
+            verbose=2,
         )

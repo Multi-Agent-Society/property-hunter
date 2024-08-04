@@ -1,45 +1,24 @@
-gather_detailed_preferences:
+research_task:
   description: >
-    From conversation with the tenant, gather all relevant preferencs, opinions and requirements pertaining
-    to the tenant's dream rental property.
+    1. Using the serper tool, find websites that list rental properties in {location}
+    2. Gather the most relevant (3 at most) websites into a list.
+
   expected_output: >
-    All the details of the dream rental property neatly formatted and concisely summarized and formatted as JSON. 
+    A list of websites that may be used to find properties for rent in {location}.
 
 search_task:
   description: >
-    Find all {rental_types} properties in {location} that fall with the rent range of {budget_high} to {budget_low}, 
-    have {no_beds} rooms/beds, {no_baths} bathrooms, and an available move-in date of {move_in_date}. Your goal is to maximize the number
-    of met criteria provided by the tenant. If {public_transit} == True, the tenant needs to know what forms of public transit are 
-    availble from or nearby their rental property if this information is provided. If {car_parking} == True, the user needs somewhere 
-    to park thier car nearby their rental property, and the availability of this option should be considered in the properties you fine. 
-    The tenant also indicated the following about pet accomodations: {pets}. Take into account these pet accomodations, if specified. 
-    If possible, also look for the provision of the following amenties in the properties you find: {other_ameneties}. If these ameneties 
-    are not present, it is ok. However, the provision of these ameneties by a given property is a bonus. Finally, the tenant specified 
-    the following extra considerations: {extra_considerations}. The rental properties you find ideally will meet most, if not all, 
-    of these extra considerations. 
-  expected_output: >
-    All the details of specifically chosen rental properties that accomodate most, if not all, of the tenant's requirements formatted as JSON. 
+    1. Using the web scrape tool and the list of websites available, find properties for rent in {location}.
+    2. Search only for properties that have {no_rooms} bedrooms.
+    3. Search only for properties that cost between {budget_min} and {budget_max} dollars per month.
+    4. Gather the information for suitable properties into a list.
 
-presentation_task:
+  expected_output: >
+    A list containing information about the most suitable rental properties, for example price, location, amenities.
+
+aggregate_task:
   description: >
-    Condcut a final conversation with the prospective tenant to help them make an informed decision in their rental property search. 
-    Present and discuss details about the final rental property options.
-    For each property, details should be presented in the following format:
-          Property Title
-          Property address
-          Contact Information
-
-          - Monthly Rent 
-          - Number of Bedrooms
-          - Number of Bathrooms
-          - Available move-in date
-
-          - Pet Considerations
-          - Accessibility of Public Transit 
-          - Availability of Car Parking
-
-          - Provided Ameneties
-          - Additiional Considerations
+    1. Select the 5 best candidates for rental properties out of a list based on price, location and amenities.
+    2. Convert the information within the list to presentable paragraphs describing each property in detail to give to the client.
   expected_output: >
-    A well structured presentation of the final rental property options in markdown format with all relevant details for each option presented clearly
-    in an organized manner. Following this presentation, you will conduct a dialogue with the tenant about these options. 
+    5 paragraphs, each describing a single property, containing information such as location, price and amenities to give to the client.

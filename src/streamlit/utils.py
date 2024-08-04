@@ -2,7 +2,7 @@
 
 from dotenv import load_dotenv, find_dotenv
 from pydantic import BaseModel
-
+import time
 import os
 
 class PropertyDetails(BaseModel):
@@ -37,15 +37,11 @@ class SearchResults(BaseModel):
 def load_env():
     _ = load_dotenv(find_dotenv())
 
-def get_serper_api_key():
+def get_api_key(service):
     load_env()
-    openai_api_key = os.getenv("SERPER_API_KEY")
-    return openai_api_key
+    api_key = os.getenv(service)
+    return api_key
 
-def get_groq_api_key():
-    load_env()
-    openai_api_key = os.getenv("GROQ_API_TOKEN")
-    return openai_api_key
 
 # break line every 80 characters if line is longer than 80 characters
 # don't break in the middle of a word
@@ -69,3 +65,7 @@ def pretty_print_result(result):
           parsed_result.append(line)
   return "\n".join(parsed_result)
 
+def stream_data(input):
+    for word in input.split(" "):
+        yield word + " "
+        time.sleep(0.02)
